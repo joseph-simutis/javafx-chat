@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/javafx-chat.iml" filepath="$PROJECT_DIR$/.idea/modules/javafx-chat.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/client/javafx-chat.client.iml" filepath="$PROJECT_DIR$/.idea/modules/client/javafx-chat.client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/client/javafx-chat.client.main.iml" filepath="$PROJECT_DIR$/.idea/modules/client/javafx-chat.client.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/client/javafx-chat.client.test.iml" filepath="$PROJECT_DIR$/.idea/modules/client/javafx-chat.client.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/javafx-chat.main.iml" filepath="$PROJECT_DIR$/.idea/modules/javafx-chat.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/server/javafx-chat.server.iml" filepath="$PROJECT_DIR$/.idea/modules/server/javafx-chat.server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/server/javafx-chat.server.main.iml" filepath="$PROJECT_DIR$/.idea/modules/server/javafx-chat.server.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/server/javafx-chat.server.test.iml" filepath="$PROJECT_DIR$/.idea/modules/server/javafx-chat.server.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/javafx-chat.test.iml" filepath="$PROJECT_DIR$/.idea/modules/javafx-chat.test.iml" />
+    </modules>
+  </component>
+</project>
