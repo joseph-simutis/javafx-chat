@@ -42,7 +42,16 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="javafx-chat.server.main" />
     <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib:2.0.20" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.ajalt.clikt:clikt-jvm:5.0.1" level="project" />
     <orderEntry type="library" name="Gradle: org.jetbrains:annotations:13.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.ajalt.clikt:clikt-core-jvm:5.0.1" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.ajalt.mordant:mordant-jvm:3.0.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.ajalt.mordant:mordant-core-jvm:3.0.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.github.ajalt.colormath:colormath-jvm:3.6.0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: com.github.ajalt.mordant:mordant-jvm-jna-jvm:3.0.0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: com.github.ajalt.mordant:mordant-jvm-ffm-jvm:3.0.0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: com.github.ajalt.mordant:mordant-jvm-graal-ffi-jvm:3.0.0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: net.java.dev.jna:jna:5.14.0" level="project" />
   </component>
   <component name="TestModuleProperties" production-module="javafx-chat.server.main" />
 </module>

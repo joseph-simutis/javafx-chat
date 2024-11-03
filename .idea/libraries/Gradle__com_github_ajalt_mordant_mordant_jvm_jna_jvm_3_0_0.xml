@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="Gradle: com.github.ajalt.mordant:mordant-jvm-jna-jvm:3.0.0" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="com.github.ajalt.mordant" artifactId="mordant-jvm-jna-jvm" version="3.0.0" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.ajalt.mordant/mordant-jvm-jna-jvm/3.0.0/bde15ea7842e9b77dec187390cde07bf6c15b14d/mordant-jvm-jna-jvm.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

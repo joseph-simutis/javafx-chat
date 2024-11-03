@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="Gradle: com.github.ajalt.mordant:mordant-core-jvm:3.0.0" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="com.github.ajalt.mordant" artifactId="mordant-core-jvm" version="3.0.0" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.ajalt.mordant/mordant-core-jvm/3.0.0/c1e712a55e6ca965522a809fef068d036a7600b7/mordant-jvm.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
