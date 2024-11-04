@@ -24,12 +24,13 @@ class ClientHandlerThread(val command: ChatServerCommand, val index: Int) : Thre
                             ) {
                                 session.writeLine("EInvalid username or password.")
                             } else {
-                                command.clients[index].username = credentials[0]
+                                session.username = credentials[0]
                                 session.writeLine("LLogin Successful!")
                                 command.echo("Session $index has logged into account ${session.username}.")
                             }
                         }
                     }
+
                     'R' -> {
                         if (session.username != null) {
                             session.writeLine("EAlready logged in!")
@@ -40,12 +41,16 @@ class ClientHandlerThread(val command: ChatServerCommand, val index: Int) : Thre
                             } else if (command.accounts.contains(credentials[0])) {
                                 session.writeLine("EUsername is taken!")
                             } else {
-                                command.accounts += Pair(credentials[0], BCrypt.withDefaults().hashToString(10, credentials[1].toCharArray()))
+                                command.accounts += Pair(
+                                    credentials[0],
+                                    BCrypt.withDefaults().hashToString(10, credentials[1].toCharArray())
+                                )
                                 session.writeLine("RRegister Successful! Please log into your new account.")
                                 command.echo("Session $index has registered an account by the name of ${session.username}.")
                             }
                         }
                     }
+
                     'M' -> {
                         if (session.username == null) {
                             session.writeLine("EMust be logged in to send a message!")
@@ -59,14 +64,20 @@ class ClientHandlerThread(val command: ChatServerCommand, val index: Int) : Thre
                             command.echo("Session $index, User ${session.username} -> \"$message\"")
                         }
                     }
+
                     'E' -> {
                         command.echo("Session $index, User ${session.username} -> Error: ${input.drop(1)}")
+                    }
+
+                    'H' -> {
+                        //session.writeLine("Heartbeat")
                     }
                 }
             }
         } catch (e: SocketTimeoutException) {
             command.echo("Session $index has disconnected!")
             session.socket.close()
+            command.clients.removeAt(index)
         }
     }
 }

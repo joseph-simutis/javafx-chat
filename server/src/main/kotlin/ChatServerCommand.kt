@@ -12,7 +12,10 @@ import java.net.ServerSocket
 class ChatServerCommand : CliktCommand() {
     val port by argument(help = "The port to open the server on.").int()
     val timeout by option(help = "The timeout for each client, in milliseconds.").int().default(10000)
-    val configFile by argument(help = "The path to the config file.").file(mustExist = false, canBeDir = false, mustBeReadable = true, mustBeWritable = true)
+    val configFile by argument(help = "The path to the config file.").file(
+        mustExist = false,
+        canBeDir = false
+    )
     val accounts = HashMap<String, String>()
     val clients = ArrayList<Session>()
 
@@ -32,7 +35,7 @@ class ChatServerCommand : CliktCommand() {
             ClientHandlerThread(this, clients.lastIndex).apply {
                 start()
             }
-            echo("A client has connected! (Connected Users: ${clients.size})")
+            echo("Session ${clients.lastIndex} has connected! (Connected Users: ${clients.size})")
         }
     }
 }

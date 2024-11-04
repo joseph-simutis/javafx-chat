@@ -8,5 +8,7 @@ data class Session(val socket: Socket, var username: String?) {
 
     fun readLine(): String = reader.readLine()
 
-    fun writeLine(str: String) = writer.write("$str\n")
+    fun writeLine(str: String) {
+        writer.write("$str\n")
+    }
 }
