@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="Gradle: at.favre.lib:bytes:1.5.0" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="at.favre.lib" artifactId="bytes" version="1.5.0" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/at.favre.lib/bytes/1.5.0/9617977854566948d767e6da8ec343b1fa107c48/bytes-1.5.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

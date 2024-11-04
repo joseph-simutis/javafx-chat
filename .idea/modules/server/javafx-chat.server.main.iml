@@ -25,6 +25,7 @@
                 <arg>$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/2.0.20/7388d355f7cceb002cd387ccb7ab3850e4e0a07f/kotlin-stdlib-2.0.20.jar</arg>
                 <arg>$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains/annotations/13.0/919f0dfe192fb4e063e7dacadee7f8bb9a2672a9/annotations-13.0.jar</arg>
                 <arg>$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-script-runtime/2.0.20/4aea042b39014e0a924c2e1d4a21b6fff7e4d35/kotlin-script-runtime-2.0.20.jar</arg>
+                <arg>$KOTLIN_BUNDLED$/lib/kotlinx-serialization-compiler-plugin.jar</arg>
               </args>
             </arrayArg>
             <arrayArg name="pluginOptions" />
@@ -43,10 +44,14 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib:2.0.20" level="project" />
+    <orderEntry type="library" name="Gradle: at.favre.lib:bcrypt:0.10.2" level="project" />
     <orderEntry type="library" name="Gradle: com.github.ajalt.clikt:clikt-jvm:5.0.1" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.7.3" level="project" />
     <orderEntry type="library" name="Gradle: org.jetbrains:annotations:13.0" level="project" />
+    <orderEntry type="library" name="Gradle: at.favre.lib:bytes:1.5.0" level="project" />
     <orderEntry type="library" name="Gradle: com.github.ajalt.clikt:clikt-core-jvm:5.0.1" level="project" />
     <orderEntry type="library" name="Gradle: com.github.ajalt.mordant:mordant-jvm:3.0.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.7.3" level="project" />
     <orderEntry type="library" name="Gradle: com.github.ajalt.mordant:mordant-core-jvm:3.0.0" level="project" />
     <orderEntry type="library" name="Gradle: com.github.ajalt.colormath:colormath-jvm:3.6.0" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: com.github.ajalt.mordant:mordant-jvm-jna-jvm:3.0.0" level="project" />
