@@ -1,9 +1,8 @@
 package io.github.josephsimutis.server
 
 import at.favre.lib.crypto.bcrypt.BCrypt
-import java.net.SocketTimeoutException
 
-class ClientHandlerThread(val command: ChatServerCommand, val index: Int) : Thread() {
+class ClientHandlerThread(private val command: ChatServerCommand, private val index: Int) : Thread() {
     override fun run() {
         val session = command.clients[index]
         try {
@@ -68,13 +67,9 @@ class ClientHandlerThread(val command: ChatServerCommand, val index: Int) : Thre
                     'E' -> {
                         command.echo("Session $index, User ${session.username} -> Error: ${input.drop(1)}")
                     }
-
-                    'H' -> {
-                        //session.writeLine("Heartbeat")
-                    }
                 }
             }
-        } catch (e: SocketTimeoutException) {
+        } catch (e: Exception) {
             command.echo("Session $index has disconnected!")
             session.socket.close()
             command.clients.removeAt(index)

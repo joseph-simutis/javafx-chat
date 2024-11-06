@@ -4,7 +4,7 @@ import javafx.application.Application
 import javafx.scene.Scene
 import javafx.stage.Stage
 import java.io.BufferedReader
-import java.io.BufferedWriter
+import java.io.PrintWriter
 import java.net.Socket
 
 class ChatClientApplication : Application() {
@@ -14,11 +14,10 @@ class ChatClientApplication : Application() {
         set(value) {
             field = value
             reader = value?.getInputStream()?.bufferedReader()
-            writer = value?.getOutputStream()?.bufferedWriter()
+            writer = value?.getOutputStream()?.let { PrintWriter(it) }
         }
     private var reader: BufferedReader? = null
-    private var writer: BufferedWriter? = null
-    private var heart = HeartbeatThread(this)
+    private var writer: PrintWriter? = null
 
     override fun start(stage: Stage) {
         primaryStage = stage
@@ -38,6 +37,4 @@ class ChatClientApplication : Application() {
         writer?.write("$str\n")
         return writer != null
     }
-
-    fun startHeart() { if (!heart.isAlive) heart.start() }
 }

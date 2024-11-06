@@ -5,6 +5,7 @@ import javafx.event.EventHandler
 import javafx.geometry.Pos
 import javafx.scene.Parent
 import javafx.scene.control.Button
+import javafx.scene.control.PasswordField
 import javafx.scene.control.TextField
 import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
@@ -46,7 +47,6 @@ enum class Screen(val width: Double, val height: Double) {
                                     play()
                                 } else {
                                     app.changeScreen(LOGIN)
-                                    app.startHeart()
                                 }
                             }
                         }
@@ -63,10 +63,10 @@ enum class Screen(val width: Double, val height: Double) {
             vBox.children.addAll(
                 Text("Login").apply { font = Font.font(36.0) },
                 HBox(Text("Username:"), TextField()),
-                HBox(Text("Password:"), TextField()),
+                HBox(Text("Password:"), PasswordField()),
                 Button("Login").apply {
                     onAction = EventHandler {
-                        app.writeLine("L${((vBox.children[1] as HBox).children[1] as TextField).text};${((vBox.children[2] as HBox).children[1] as TextField).text}")
+                        app.writeLine("L${((vBox.children[1] as HBox).children[1] as TextField).text};${((vBox.children[2] as HBox).children[1] as PasswordField).text}")
                         val input = app.readLine()!!
                         when (input.first()) {
                             'L' -> {
@@ -75,7 +75,7 @@ enum class Screen(val width: Double, val height: Double) {
                             'E' -> {
                                 (vBox.children[5] as Text).text = input.drop(1)
                                 ((vBox.children[1] as HBox).children[1] as TextField).text = ""
-                                ((vBox.children[2] as HBox).children[1] as TextField).text = ""
+                                ((vBox.children[2] as HBox).children[1] as PasswordField).text = ""
                                 FadeTransition(Duration.seconds(5.0), vBox.children[5]).apply {
                                     fromValue = 1.0
                                     toValue = 0.0
@@ -99,9 +99,7 @@ enum class Screen(val width: Double, val height: Double) {
         override fun draw(app: ChatClientApplication) = VBox()
     },
     CHAT(600.0, 400.0) {
-        override fun draw(app: ChatClientApplication): Parent {
-            TODO("Not yet implemented")
-        }
+        override fun draw(app: ChatClientApplication) = VBox()
     };
 
     abstract fun draw(app: ChatClientApplication): Parent

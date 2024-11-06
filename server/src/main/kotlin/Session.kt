@@ -1,10 +1,11 @@
 package io.github.josephsimutis.server
 
+import java.io.PrintWriter
 import java.net.Socket
 
 data class Session(val socket: Socket, var username: String?) {
     private val reader = socket.getInputStream().bufferedReader()
-    private val writer = socket.getOutputStream().bufferedWriter()
+    private val writer = PrintWriter(socket.getOutputStream())
 
     fun readLine(): String = reader.readLine()
 
