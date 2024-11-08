@@ -9,12 +9,13 @@ import java.net.Socket
 
 class ChatClientApplication : Application() {
     lateinit var primaryStage: Stage
-    private var currentScreen = Screen.PRECONNECT
+    var currentScreen = Screen.PRECONNECT
+        private set
     var socket: Socket? = null
         set(value) {
             field = value
             reader = value?.getInputStream()?.bufferedReader()
-            writer = value?.getOutputStream()?.let { PrintWriter(it) }
+            writer = value?.getOutputStream()?.let { PrintWriter(it, true) }
         }
     private var reader: BufferedReader? = null
     private var writer: PrintWriter? = null
@@ -34,7 +35,7 @@ class ChatClientApplication : Application() {
     fun readLine(): String? = reader?.readLine()
 
     fun writeLine(str: String): Boolean {
-        writer?.write("$str\n")
+        writer?.println(str)
         return writer != null
     }
 }

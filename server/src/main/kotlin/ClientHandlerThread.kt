@@ -45,7 +45,7 @@ class ClientHandlerThread(private val command: ChatServerCommand, private val in
                                     BCrypt.withDefaults().hashToString(10, credentials[1].toCharArray())
                                 )
                                 session.writeLine("RRegister Successful! Please log into your new account.")
-                                command.echo("Session $index has registered an account by the name of ${session.username}.")
+                                command.echo("Session $index has registered an account by the name of ${credentials[0]}.")
                             }
                         }
                     }
@@ -56,16 +56,14 @@ class ClientHandlerThread(private val command: ChatServerCommand, private val in
                         } else {
                             val message = input.drop(1)
                             for (index2 in 0..command.clients.lastIndex) {
-                                if (index != index2) {
-                                    command.clients[index2].writeLine("M$message")
-                                }
+                                command.clients[index2].writeLine("M${session.username}: $message")
                             }
-                            command.echo("Session $index, User ${session.username} -> \"$message\"")
+                            command.echo("Session $index User ${session.username} -> \"$message\"")
                         }
                     }
 
                     'E' -> {
-                        command.echo("Session $index, User ${session.username} -> Error: ${input.drop(1)}")
+                        command.echo("Session $index User ${session.username} -> Error: ${input.drop(1)}")
                     }
                 }
             }
