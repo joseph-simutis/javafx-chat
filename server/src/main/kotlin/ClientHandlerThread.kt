@@ -3,10 +3,11 @@ package io.github.josephsimutis.server
 import at.favre.lib.crypto.bcrypt.BCrypt
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import java.util.*
 
-class ClientHandlerThread(private val command: ChatServerCommand, private val index: Int) : Thread() {
+class ClientHandlerThread(private val command: ChatServerCommand, private val uuid: UUID) : Thread() {
     override fun run() {
-        val session = command.clients[index]
+        val session = command.clients[uuid]!!
         try {
             while (true) {
                 val input = session.readLine()
@@ -28,7 +29,8 @@ class ClientHandlerThread(private val command: ChatServerCommand, private val in
                                 session.writeLine("LLogin Successful!")
                                 session.username = credentials[0]
                                 session.account = command.accounts[credentials[0]]
-                                command.echo("Session $index has logged into account ${session.username}.")
+                                command.echo("Session $uuid has logged into account ${session.username}.")
+                                command.broadcast("${session.username} has connected.")
                             }
                         }
                     }
@@ -49,7 +51,7 @@ class ClientHandlerThread(private val command: ChatServerCommand, private val in
                                 )
                                 session.writeLine("RRegister Successful! Please log into your new account.")
                                 command.configFile.writeText(Json.encodeToString(command.accounts))
-                                command.echo("Session $index has registered an account by the name of ${credentials[0]}.")
+                                command.echo("Session $uuid has registered an account by the name of ${credentials[0]}.")
                             }
                         }
                     }
@@ -78,23 +80,22 @@ class ClientHandlerThread(private val command: ChatServerCommand, private val in
                                     else -> session.writeLine("MInvalid command! Use /help for help.")
                                 }
                             } else {
-                                for (index2 in 0..command.clients.lastIndex) {
-                                    command.clients[index2].writeLine("M${session.username}: $message")
-                                }
-                                command.echo("Session $index User ${session.username} -> \"$message\"")
+                                command.broadcast("${session.username}: $message")
+                                command.echo("Session $uuid User ${session.username} -> \"$message\"")
                             }
                         }
                     }
 
                     'E' -> {
-                        command.echo("Session $index User ${session.username} -> Error: ${input.drop(1)}")
+                        command.echo("Session $uuid User ${session.username} -> Error: ${input.drop(1)}")
                     }
                 }
             }
         } catch (e: Exception) {
-            command.echo("Session $index has disconnected!")
+            command.echo("Session $uuid has disconnected!")
+            command.broadcast("${session.username} has disconnected.")
             session.socket.close()
-            command.clients.removeAt(index)
+            command.clients.remove(uuid)
         }
     }
 }

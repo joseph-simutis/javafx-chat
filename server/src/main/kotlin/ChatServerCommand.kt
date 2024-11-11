@@ -7,6 +7,7 @@ import com.github.ajalt.clikt.parameters.types.int
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.net.ServerSocket
+import java.util.UUID
 
 class ChatServerCommand : CliktCommand() {
     private val port by argument(help = "The port to open the server on.").int()
@@ -15,7 +16,7 @@ class ChatServerCommand : CliktCommand() {
         canBeDir = false
     )
     val accounts = HashMap<String, AccountInfo>()
-    val clients = ArrayList<Session>()
+    val clients = HashMap<UUID, Session>()
 
     override fun run() {
         echo("Starting server on port $port...")
@@ -25,18 +26,25 @@ class ChatServerCommand : CliktCommand() {
         }
         Runtime.getRuntime().addShutdownHook(Thread {
             configFile.writeText(Json.encodeToString(accounts))
-            clients.forEach {
-                it.socket.close()
+            clients.forEach { (_, value) ->
+                value.socket.close()
             }
             serverSocket.close()
         })
         echo("Server started!")
         while (true) {
-            clients += Session(serverSocket.accept(), null, null)
-            ClientHandlerThread(this, clients.lastIndex).apply {
+            val uuid = UUID.randomUUID()
+            clients.put(uuid, Session(serverSocket.accept(), null, null))
+            ClientHandlerThread(this, uuid).apply {
                 start()
             }
-            echo("Session ${clients.lastIndex} has connected! (Connected Users: ${clients.size})")
+            echo("Session $uuid has connected! (Connected Users: ${clients.size})")
+        }
+    }
+
+    fun broadcast(message: String) {
+        clients.forEach { (_, client) ->
+            if (client.account != null) client.writeLine("M$message")
         }
     }
 }
