@@ -3,7 +3,7 @@ package io.github.josephsimutis.server
 import java.io.PrintWriter
 import java.net.Socket
 
-data class Session(val socket: Socket, var username: String?) {
+data class Session(val socket: Socket, var username: String?, var account: AccountInfo?) {
     private val reader = socket.getInputStream().bufferedReader()
     private val writer = PrintWriter(socket.getOutputStream(), true)
 

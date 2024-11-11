@@ -15,7 +15,6 @@ import javafx.scene.text.Text
 import javafx.util.Duration
 import java.io.IOException
 import java.net.Socket
-import java.util.*
 
 enum class Screen(val width: Double, val height: Double) {
     PRECONNECT(600.0, 400.0) {

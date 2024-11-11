@@ -32,10 +32,7 @@ class ChatClientApplication : Application() {
         primaryStage.scene = Scene(currentScreen.draw(this), newScreen.width, newScreen.height)
     }
 
-    fun readLine(): String? = reader?.readLine()
+    fun readLine(): String = reader!!.readLine()
 
-    fun writeLine(str: String): Boolean {
-        writer?.println(str)
-        return writer != null
-    }
+    fun writeLine(str: String) { writer!!.println(str) }
 }
