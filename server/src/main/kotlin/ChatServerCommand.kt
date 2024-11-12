@@ -34,7 +34,7 @@ class ChatServerCommand : CliktCommand() {
         echo("Server started!")
         while (true) {
             val uuid = UUID.randomUUID()
-            clients.put(uuid, Session(serverSocket.accept(), null, null))
+            clients[uuid] = Session(serverSocket.accept(), null)
             ClientHandlerThread(this, uuid).apply {
                 start()
             }

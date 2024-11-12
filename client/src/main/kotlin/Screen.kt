@@ -68,7 +68,7 @@ enum class Screen(val width: Double, val height: Double) {
                 Button("Login").apply {
                     onAction = EventHandler {
                         app.writeLine("L${((vBox.children[1] as HBox).children[1] as TextField).text};${((vBox.children[2] as HBox).children[1] as PasswordField).text}")
-                        val input = app.readLine()!!
+                        val input = app.readLine()
                         when (input.first()) {
                             'L' -> {
                                 app.changeScreen(CHAT)
@@ -131,11 +131,16 @@ enum class Screen(val width: Double, val height: Double) {
         override fun draw(app: ChatClientApplication) = HBox().also { hBox ->
             ServerHandlerThread(app).start()
             hBox.children.addAll(
-                TextField(),
-                Button("Send").apply {
+                TextField().apply {
                     onAction = EventHandler {
-                        app.writeLine("M${(hBox.children[0] as TextField).text}")
-                        (hBox.children[0] as TextField).text = ""
+                        app.writeLine("M$text")
+                        text = ""
+                    }
+                },
+                Button("Logout").apply {
+                    onAction = EventHandler {
+                        app.changeScreen(LOGIN)
+                        app.writeLine("Logout")
                     }
                 }
             )
