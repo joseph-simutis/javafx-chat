@@ -94,11 +94,27 @@ class ClientHandlerThread(private val command: ChatServerCommand, private val uu
                                             else if (!command.accounts.contains(command2[1])) session.writeLine("ENo such user!")
                                             else if (command.accounts[command2[1]]?.banned == true) session.writeLine("E${command2[1]} is already banned!")
                                             else {
-                                                command.accounts[command2[1]]?.banned = true
+                                                command.clients.forEach { (_, session2) ->
+                                                    if (session2.account?.first == command2[1] && command.accounts[command2[1]]?.banned != true) {
+                                                        command.accounts[command2[1]]?.banned = true
+                                                        session2.writeLine("Banned!")
+                                                        command.clients[uuid]?.account = null
+                                                        command.broadcast("M${session.account?.first} has been banned.")
+                                                    }
+                                                }
                                                 session.writeLine("MBanned ${command2[1]}!")
                                             }
                                         } else session.writeLine("EIncorrect permissions! Use /help for help!")
                                     }
+                                    "unban" -> if (session.account?.second?.admin == true) {
+                                        if (command2.size != 2) session.writeLine("EIncorrect arguments!")
+                                        else if (!command.accounts.contains(command2[1])) session.writeLine("ENo such user!")
+                                        else if (command.accounts[command2[1]]?.banned == false) session.writeLine("E${command2[1]} is already unbanned!")
+                                        else {
+                                            command.accounts[command2[1]]?.banned = false
+                                            session.writeLine("MUnbanned ${command2[1]}!")
+                                        }
+                                    } else session.writeLine("EIncorrect permissions! Use /help for help!")
 
                                     else -> session.writeLine("MInvalid command! Use /help for help.")
                                 }

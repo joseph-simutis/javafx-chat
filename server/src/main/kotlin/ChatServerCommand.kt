@@ -1,7 +1,9 @@
 package io.github.josephsimutis.server
 
 import com.github.ajalt.clikt.core.CliktCommand
-import com.github.ajalt.clikt.parameters.arguments.argument
+import com.github.ajalt.clikt.parameters.options.default
+import com.github.ajalt.clikt.parameters.options.option
+import com.github.ajalt.clikt.parameters.options.required
 import com.github.ajalt.clikt.parameters.types.file
 import com.github.ajalt.clikt.parameters.types.int
 import kotlinx.serialization.encodeToString
@@ -10,11 +12,11 @@ import java.net.ServerSocket
 import java.util.UUID
 
 class ChatServerCommand : CliktCommand() {
-    private val port by argument(help = "The port to open the server on.").int()
-    val configFile by argument(help = "The path to the config file.").file(
+    private val port by option(help = "The port to open the server on.").int().default(12345)
+    val configFile by option(help = "The path to the config file.").file(
         mustExist = false,
         canBeDir = false
-    )
+    ).required()
     val accounts = HashMap<String, AccountInfo>()
     val clients = HashMap<UUID, Session>()
 

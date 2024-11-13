@@ -9,14 +9,14 @@ class ServerHandlerThread(private val app: ChatClientApplication) : Thread() {
             when (input.first()) {
                 'M' -> {
                     if (app.currentScreen == Screen.CHAT) {
-                        println(input.drop(1))
+                        app.printToScreen(input.drop(1))
                     } else {
                         return
                     }
                 }
                 'B' -> {
                     app.changeScreen(Screen.LOGIN)
-                    println("You have been banned!")
+                    app.printToScreen("You have been banned!")
                     return
                 }
             }

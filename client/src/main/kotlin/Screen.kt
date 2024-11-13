@@ -18,6 +18,8 @@ import java.net.Socket
 
 enum class Screen(val width: Double, val height: Double) {
     PRECONNECT(600.0, 400.0) {
+        private val messageBox = Text("")
+
         override fun draw(app: ChatClientApplication) = VBox().also { vBox ->
             vBox.children.addAll(
                 Text("Connect to Server").apply { font = Font.font(36.0) },
@@ -29,37 +31,39 @@ enum class Screen(val width: Double, val height: Double) {
                         TextField(),
                         Button("Connect").also { button ->
                             button.onAction = EventHandler {
-                                var exception = false
                                 try {
                                     app.socket = Socket(
                                         (hBox.children[1] as TextField).text,
                                         (hBox.children[3] as TextField).text.toInt()
                                     )
-                                } catch (e: IOException) {
-                                    (vBox.children[2] as Text).text = "Cannot connect to server: ${e.message}"
-                                    exception = true
-                                } catch (e: NumberFormatException) {
-                                    (vBox.children[2] as Text).text = "Cannot convert port to a number: ${e.message}"
-                                    exception = true
-                                }
-                                if (exception) FadeTransition(Duration.seconds(5.0), vBox.children[2]).apply {
-                                    fromValue = 1.0
-                                    toValue = 0.0
-                                    play()
-                                } else {
                                     app.changeScreen(LOGIN)
+                                } catch (e: IOException) {
+                                    printToScreen("Cannot connect to server: ${e.message}")
+                                } catch (e: NumberFormatException) {
+                                    printToScreen("Cannot convert port to a number: ${e.message}")
                                 }
                             }
                         }
                     )
                     hBox.alignment = Pos.CENTER
                 },
-                Text("")
+                messageBox
             )
             vBox.alignment = Pos.CENTER
         }
+
+        override fun printToScreen(str: String) {
+            messageBox.text = str
+            FadeTransition(Duration.seconds(5.0), messageBox).apply {
+                fromValue = 1.0
+                toValue = 0.0
+                play()
+            }
+        }
     },
     LOGIN(600.0, 400.0) {
+        private val messageBox = Text("")
+
         override fun draw(app: ChatClientApplication) = VBox().also { vBox ->
             vBox.children.addAll(
                 Text("Login").apply { font = Font.font(36.0) },
@@ -75,14 +79,9 @@ enum class Screen(val width: Double, val height: Double) {
                             }
 
                             'E' -> {
-                                (vBox.children[5] as Text).text = input.drop(1)
                                 ((vBox.children[1] as HBox).children[1] as TextField).text = ""
                                 ((vBox.children[2] as HBox).children[1] as PasswordField).text = ""
-                                FadeTransition(Duration.seconds(5.0), vBox.children[5]).apply {
-                                    fromValue = 1.0
-                                    toValue = 0.0
-                                    play()
-                                }
+                                printToScreen(input.drop(1))
                             }
                         }
                     }
@@ -92,12 +91,23 @@ enum class Screen(val width: Double, val height: Double) {
                         app.changeScreen(REGISTER)
                     }
                 },
-                Text("")
+                messageBox
             )
             vBox.alignment = Pos.CENTER
         }
+
+        override fun printToScreen(str: String) {
+            messageBox.text = str
+            FadeTransition(Duration.seconds(5.0), messageBox).apply {
+                fromValue = 1.0
+                toValue = 0.0
+                play()
+            }
+        }
     },
     REGISTER(600.0, 400.0) {
+        private val messageBox = Text("")
+
         override fun draw(app: ChatClientApplication) = VBox().also { vBox ->
             vBox.children.addAll(
                 Text("Register").apply { font = Font.font(36.0) },
@@ -106,15 +116,10 @@ enum class Screen(val width: Double, val height: Double) {
                 Button("Register").apply {
                     onAction = EventHandler {
                         app.writeLine("R${((vBox.children[1] as HBox).children[1] as TextField).text};${((vBox.children[2] as HBox).children[1] as PasswordField).text}")
-                        val input = app.readLine()!!
-                        (vBox.children[5] as Text).text = input.drop(1)
+                        val input = app.readLine()
                         ((vBox.children[1] as HBox).children[1] as TextField).text = ""
                         ((vBox.children[2] as HBox).children[1] as PasswordField).text = ""
-                        FadeTransition(Duration.seconds(5.0), vBox.children[5]).apply {
-                            fromValue = 1.0
-                            toValue = 0.0
-                            play()
-                        }
+                        printToScreen(input.drop(1))
                     }
                 },
                 Button("Switch to login screen").apply {
@@ -122,15 +127,31 @@ enum class Screen(val width: Double, val height: Double) {
                         app.changeScreen(LOGIN)
                     }
                 },
-                Text("")
+                messageBox
             )
             vBox.alignment = Pos.CENTER
         }
+
+        override fun printToScreen(str: String) {
+            messageBox.text = str
+            FadeTransition(Duration.seconds(5.0), messageBox).apply {
+                fromValue = 1.0
+                toValue = 0.0
+                play()
+            }
+        }
     },
     CHAT(600.0, 400.0) {
-        override fun draw(app: ChatClientApplication) = HBox().also { hBox ->
+        private val messageBox = TextArea()
+
+        override fun draw(app: ChatClientApplication) = VBox().also { vBox ->
             ServerHandlerThread(app).start()
-            hBox.children.addAll(
+            vBox.children.addAll(
+                messageBox.apply {
+                    text = ""
+                    isEditable = false
+                    prefHeightProperty().bind(vBox.heightProperty())
+                },
                 TextField().apply {
                     onAction = EventHandler {
                         app.writeLine("M$text")
@@ -144,10 +165,15 @@ enum class Screen(val width: Double, val height: Double) {
                     }
                 }
             )
-            hBox.minWidthProperty().bind(app.primaryStage.scene.widthProperty())
-            hBox.minHeightProperty().bind(app.primaryStage.scene.heightProperty())
+            vBox.minWidthProperty().bind(app.primaryStage.scene.widthProperty())
+            vBox.minHeightProperty().bind(app.primaryStage.scene.heightProperty())
+        }
+
+        override fun printToScreen(str: String) {
+            messageBox.text += "\n$str"
         }
     };
 
     abstract fun draw(app: ChatClientApplication): Parent
+    abstract fun printToScreen(str: String)
 }

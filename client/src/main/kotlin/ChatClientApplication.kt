@@ -35,4 +35,8 @@ class ChatClientApplication : Application() {
     fun readLine(): String = reader!!.readLine()
 
     fun writeLine(str: String) { writer!!.println(str) }
+
+    fun printToScreen(str: String) {
+        currentScreen.printToScreen(str)
+    }
 }
