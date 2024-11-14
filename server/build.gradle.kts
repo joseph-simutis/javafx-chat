@@ -19,3 +19,16 @@ dependencies {
 application {
     mainClass = "io.github.josephsimutis.server.MainKt"
 }
+
+tasks.withType<Jar> {
+    manifest {
+        attributes["Main-Class"] = "io.github.josephsimutis.server.MainKt"
+    }
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    from(sourceSets.main.get().output)
+    from({
+        configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
+    })
+}
