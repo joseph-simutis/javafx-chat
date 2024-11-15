@@ -21,19 +21,16 @@ class ChatServerCommand : CliktCommand() {
     val clients = HashMap<UUID, Session>()
 
     override fun run() {
-        echo("Starting server on port $port...")
         val serverSocket = ServerSocket(port)
-        if (configFile.exists()) {
-            accounts += Json.decodeFromString<HashMap<String, AccountInfo>>(configFile.readText())
-        }
+        if (configFile.exists()) accounts += Json.decodeFromString<HashMap<String, AccountInfo>>(configFile.readText())
         Runtime.getRuntime().addShutdownHook(Thread {
-            configFile.writeText(Json.encodeToString(accounts))
+            updateConfigFile()
             clients.forEach { (_, value) ->
                 value.socket.close()
             }
             serverSocket.close()
         })
-        echo("Server started!")
+        echo("Started server on port $port!")
         while (true) {
             val uuid = UUID.randomUUID()
             clients[uuid] = Session(serverSocket.accept(), null)
@@ -46,7 +43,9 @@ class ChatServerCommand : CliktCommand() {
 
     fun broadcast(message: String) {
         clients.forEach { (_, client) ->
-            if (client.account != null) client.writeLine("M$message")
+            if (client.account != null) client.writePacket(listOf("Message", message))
         }
     }
+
+    fun updateConfigFile() { configFile.writeText(Json.encodeToString(accounts)) }
 }

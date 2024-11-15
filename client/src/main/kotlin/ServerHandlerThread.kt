@@ -5,16 +5,16 @@ import javafx.scene.Node
 class ServerHandlerThread(private val app: ChatClientApplication) : Thread() {
     override fun run() {
         while (app.currentScreen == Screen.CHAT) {
-            val input = app.readLine()
+            val input = app.readPacket()
             when (input.first()) {
-                'M' -> {
+                "Message" -> {
                     if (app.currentScreen == Screen.CHAT) {
-                        app.printToScreen(input.drop(1))
+                        app.printToScreen(input[1])
                     } else {
                         return
                     }
                 }
-                'B' -> {
+                "Ban" -> {
                     app.changeScreen(Screen.LOGIN)
                     app.printToScreen("You have been banned!")
                     return

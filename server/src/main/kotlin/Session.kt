@@ -7,9 +7,7 @@ data class Session(val socket: Socket, var account: Pair<String, AccountInfo>?) 
     private val reader = socket.getInputStream().bufferedReader()
     private val writer = PrintWriter(socket.getOutputStream(), true)
 
-    fun readLine(): String = reader.readLine()
+    fun readPacket(): List<String> = reader.readLine().split(';')
 
-    fun writeLine(str: String) {
-        writer.println(str)
-    }
+    fun writePacket(packet: List<String>) { writer.println(packet.fold("") { str, section -> "$str;$section" }) }
 }

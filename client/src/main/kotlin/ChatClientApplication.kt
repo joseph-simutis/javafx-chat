@@ -32,9 +32,9 @@ class ChatClientApplication : Application() {
         primaryStage.scene = Scene(currentScreen.draw(this), newScreen.width, newScreen.height)
     }
 
-    fun readLine(): String = reader!!.readLine()
+    fun readPacket(): List<String> = reader!!.readLine().split(';')
 
-    fun writeLine(str: String) { writer!!.println(str) }
+    fun writePacket(packet: List<String>) { writer!!.println(packet.fold("") { str, section -> "$str;$section" }) }
 
     fun printToScreen(str: String) {
         currentScreen.printToScreen(str)

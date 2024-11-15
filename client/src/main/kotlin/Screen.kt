@@ -4,10 +4,7 @@ import javafx.animation.FadeTransition
 import javafx.event.EventHandler
 import javafx.geometry.Pos
 import javafx.scene.Parent
-import javafx.scene.control.Button
-import javafx.scene.control.PasswordField
-import javafx.scene.control.TextArea
-import javafx.scene.control.TextField
+import javafx.scene.control.*
 import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
 import javafx.scene.text.Font
@@ -15,6 +12,7 @@ import javafx.scene.text.Text
 import javafx.util.Duration
 import java.io.IOException
 import java.net.Socket
+import java.util.function.UnaryOperator
 
 enum class Screen(val width: Double, val height: Double) {
     PRECONNECT(600.0, 400.0) {
@@ -67,21 +65,34 @@ enum class Screen(val width: Double, val height: Double) {
         override fun draw(app: ChatClientApplication) = VBox().also { vBox ->
             vBox.children.addAll(
                 Text("Login").apply { font = Font.font(36.0) },
-                HBox(Text("Username:"), TextField()),
-                HBox(Text("Password:"), PasswordField()),
+                HBox(Text("Username:"), TextField().apply {
+                    textFormatter = TextFormatter<String> {
+                        if (!it.text.contains(';')) it else null
+                    }
+                }),
+                HBox(Text("Password:"), PasswordField().apply {
+                    textFormatter = TextFormatter<String> {
+                        if (!it.text.contains(';')) it else null
+                    }
+                }),
                 Button("Login").apply {
                     onAction = EventHandler {
-                        app.writeLine("L${((vBox.children[1] as HBox).children[1] as TextField).text};${((vBox.children[2] as HBox).children[1] as PasswordField).text}")
-                        val input = app.readLine()
+                        app.writePacket(
+                            listOf(
+                                "Login",
+                                "${((vBox.children[1] as HBox).children[1] as TextField).text};${((vBox.children[2] as HBox).children[1] as PasswordField).text}"
+                            )
+                        )
+                        val input = app.readPacket()
                         when (input.first()) {
-                            'L' -> {
+                            "Login" -> {
                                 app.changeScreen(CHAT)
                             }
 
-                            'E' -> {
+                            "Error" -> {
                                 ((vBox.children[1] as HBox).children[1] as TextField).text = ""
                                 ((vBox.children[2] as HBox).children[1] as PasswordField).text = ""
-                                printToScreen(input.drop(1))
+                                printToScreen(input[1])
                             }
                         }
                     }
@@ -111,15 +122,28 @@ enum class Screen(val width: Double, val height: Double) {
         override fun draw(app: ChatClientApplication) = VBox().also { vBox ->
             vBox.children.addAll(
                 Text("Register").apply { font = Font.font(36.0) },
-                HBox(Text("Username:"), TextField()),
-                HBox(Text("Password:"), PasswordField()),
+                HBox(Text("Username:"), TextField().apply {
+                    textFormatter = TextFormatter<String> {
+                        if (!it.text.contains(';')) it else null
+                    }
+                }),
+                HBox(Text("Password:"), PasswordField().apply {
+                    textFormatter = TextFormatter<String> {
+                        if (!it.text.contains(';')) it else null
+                    }
+                }),
                 Button("Register").apply {
                     onAction = EventHandler {
-                        app.writeLine("R${((vBox.children[1] as HBox).children[1] as TextField).text};${((vBox.children[2] as HBox).children[1] as PasswordField).text}")
-                        val input = app.readLine()
+                        app.writePacket(
+                            listOf(
+                                "Register",
+                                "${((vBox.children[1] as HBox).children[1] as TextField).text};${((vBox.children[2] as HBox).children[1] as PasswordField).text}"
+                            )
+                        )
+                        val input = app.readPacket()
                         ((vBox.children[1] as HBox).children[1] as TextField).text = ""
                         ((vBox.children[2] as HBox).children[1] as PasswordField).text = ""
-                        printToScreen(input.drop(1))
+                        printToScreen(input[1])
                     }
                 },
                 Button("Switch to login screen").apply {
@@ -154,14 +178,14 @@ enum class Screen(val width: Double, val height: Double) {
                 },
                 TextField().apply {
                     onAction = EventHandler {
-                        app.writeLine("M$text")
+                        app.writePacket(listOf("Message", text))
                         text = ""
                     }
                 },
                 Button("Logout").apply {
                     onAction = EventHandler {
                         app.changeScreen(LOGIN)
-                        app.writeLine("Logout")
+                        app.writePacket(listOf("Logout"))
                     }
                 }
             )
