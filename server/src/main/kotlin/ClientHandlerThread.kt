@@ -1,8 +1,6 @@
 package io.github.josephsimutis.server
 
 import at.favre.lib.crypto.bcrypt.BCrypt
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import java.util.*
 
 class ClientHandlerThread(private val command: ChatServerCommand, private val uuid: UUID) : Thread() {
@@ -11,7 +9,7 @@ class ClientHandlerThread(private val command: ChatServerCommand, private val uu
         try {
             while (true) {
                 val input = session.readPacket()
-                when (input.first()) {
+                when (input[0]) {
                     "Login" -> {
                         if (session.account?.first != null) session.writePacket(listOf("Error", "You are already logged in!"))
                         else {
@@ -87,7 +85,7 @@ class ClientHandlerThread(private val command: ChatServerCommand, private val uu
                             session.writePacket(listOf("Error", "Must be logged in to send a message!"))
                         } else {
                             val message = input[1]
-                            if (message.first() == '/') {
+                            if (message[0] == '/') {
                                 val command2 = message.drop(1).split(' ')
                                 when (command2[0]) {
                                     "help" -> session.writePacket(listOf("Message", "Commands:\n/help: Prints this message.\n/account: Lists the information about your account.${if (session.account?.second?.admin == true) "\n/ban: Bans an account." else ""}"))

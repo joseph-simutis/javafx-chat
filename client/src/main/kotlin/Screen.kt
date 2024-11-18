@@ -12,7 +12,6 @@ import javafx.scene.text.Text
 import javafx.util.Duration
 import java.io.IOException
 import java.net.Socket
-import java.util.function.UnaryOperator
 
 enum class Screen(val width: Double, val height: Double) {
     PRECONNECT(600.0, 400.0) {
@@ -83,16 +82,21 @@ enum class Screen(val width: Double, val height: Double) {
                                 "${((vBox.children[1] as HBox).children[1] as TextField).text};${((vBox.children[2] as HBox).children[1] as PasswordField).text}"
                             )
                         )
-                        val input = app.readPacket()
-                        when (input.first()) {
-                            "Login" -> {
-                                app.changeScreen(CHAT)
-                            }
+                        app.readPacket().also { input ->
+                            when (input[0]) {
+                                "Login" -> {
+                                    app.changeScreen(CHAT)
+                                }
 
-                            "Error" -> {
-                                ((vBox.children[1] as HBox).children[1] as TextField).text = ""
-                                ((vBox.children[2] as HBox).children[1] as PasswordField).text = ""
-                                printToScreen(input[1])
+                                "Error" -> {
+                                    ((vBox.children[1] as HBox).children[1] as TextField).text = ""
+                                    ((vBox.children[2] as HBox).children[1] as PasswordField).text = ""
+                                    printToScreen(input[1])
+                                }
+
+                                else -> {
+                                    printToScreen("Server responded with invalid packet: ${input}!")
+                                }
                             }
                         }
                     }
@@ -178,15 +182,21 @@ enum class Screen(val width: Double, val height: Double) {
                 },
                 TextField().apply {
                     onAction = EventHandler {
-                        app.writePacket(listOf("Message", text))
-                        text = ""
+                        if (text != "") {
+                            app.writePacket(listOf("Message", text))
+                            text = ""
+                        }
                     }
                 },
-                Button("Logout").apply {
-                    onAction = EventHandler {
-                        app.changeScreen(LOGIN)
-                        app.writePacket(listOf("Logout"))
-                    }
+                HBox().also { hBox ->
+                    hBox.children.addAll(
+                        Button("Logout").apply {
+                            onAction = EventHandler {
+                                app.changeScreen(LOGIN)
+                                app.writePacket(listOf("Logout"))
+                            }
+                        }
+                    )
                 }
             )
             vBox.minWidthProperty().bind(app.primaryStage.scene.widthProperty())
@@ -195,6 +205,7 @@ enum class Screen(val width: Double, val height: Double) {
 
         override fun printToScreen(str: String) {
             messageBox.text += "\n$str"
+            messageBox.scrollTop = Double.MAX_VALUE
         }
     };
 

@@ -34,7 +34,7 @@ class ChatClientApplication : Application() {
 
     fun readPacket(): List<String> = reader!!.readLine().split(';')
 
-    fun writePacket(packet: List<String>) { writer!!.println(packet.fold("") { str, section -> "$str;$section" }) }
+    fun writePacket(packet: List<String>) { writer!!.println(packet.drop(1).fold(packet[0]) { str, section -> "$str;$section" }) }
 
     fun printToScreen(str: String) {
         currentScreen.printToScreen(str)
