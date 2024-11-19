@@ -13,7 +13,7 @@ import java.util.UUID
 
 class ChatServerCommand : CliktCommand() {
     private val port by option(help = "The port to open the server on.").int().default(12345)
-    val configFile by option(help = "The path to the config file.").file(
+    private val accountFile by option(help = "The path to the account file.").file(
         mustExist = false,
         canBeDir = false
     ).required()
@@ -22,14 +22,7 @@ class ChatServerCommand : CliktCommand() {
 
     override fun run() {
         val serverSocket = ServerSocket(port)
-        if (configFile.exists()) accounts += Json.decodeFromString<HashMap<String, AccountInfo>>(configFile.readText())
-        Runtime.getRuntime().addShutdownHook(Thread {
-            updateConfigFile()
-            clients.forEach { (_, value) ->
-                value.socket.close()
-            }
-            serverSocket.close()
-        })
+        if (accountFile.exists()) accounts += Json.decodeFromString<HashMap<String, AccountInfo>>(accountFile.readText())
         echo("Started server on port $port!")
         while (true) {
             val uuid = UUID.randomUUID()
@@ -47,5 +40,5 @@ class ChatServerCommand : CliktCommand() {
         }
     }
 
-    fun updateConfigFile() { configFile.writeText(Json.encodeToString(accounts)) }
+    fun updateAccountFile() { accountFile.writeText(Json.encodeToString(accounts)) }
 }

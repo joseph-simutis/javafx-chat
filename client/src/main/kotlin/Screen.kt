@@ -182,10 +182,8 @@ enum class Screen(val width: Double, val height: Double) {
                 },
                 TextField().apply {
                     onAction = EventHandler {
-                        if (text != "") {
-                            app.writePacket(listOf("Message", text))
-                            text = ""
-                        }
+                        if (text != "") app.writePacket(listOf("Message", text))
+                        text = ""
                     }
                 },
                 HBox().also { hBox ->

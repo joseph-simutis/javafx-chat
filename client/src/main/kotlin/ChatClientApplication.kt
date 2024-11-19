@@ -11,14 +11,18 @@ class ChatClientApplication : Application() {
     lateinit var primaryStage: Stage
     var currentScreen = Screen.PRECONNECT
         private set
-    var socket: Socket? = null
+    private var connection: Triple<Socket, BufferedReader, PrintWriter>? = null
+    var socket: Socket?
+        get() = connection?.first
         set(value) {
-            field = value
-            reader = value?.getInputStream()?.bufferedReader()
-            writer = value?.getOutputStream()?.let { PrintWriter(it, true) }
+            connection = value?.let {
+                Triple(
+                    it,
+                    it.getInputStream().bufferedReader(),
+                    PrintWriter(it.getOutputStream(), true)
+                )
+            }
         }
-    private var reader: BufferedReader? = null
-    private var writer: PrintWriter? = null
 
     override fun start(stage: Stage) {
         primaryStage = stage
@@ -32,9 +36,16 @@ class ChatClientApplication : Application() {
         primaryStage.scene = Scene(currentScreen.draw(this), newScreen.width, newScreen.height)
     }
 
-    fun readPacket(): List<String> = reader!!.readLine().split(';')
+    fun readPacket(): List<String> {
+        val sections = ArrayList<String>()
+        repeat(connection!!.second.readLine().toInt()) { sections += connection!!.second.readLine() }
+        return sections.toList()
+    }
 
-    fun writePacket(packet: List<String>) { writer!!.println(packet.drop(1).fold(packet[0]) { str, section -> "$str;$section" }) }
+    fun writePacket(packet: List<String>) {
+        connection!!.third.println(packet.size)
+        for (element in packet) connection!!.third.println(element)
+    }
 
     fun printToScreen(str: String) {
         currentScreen.printToScreen(str)

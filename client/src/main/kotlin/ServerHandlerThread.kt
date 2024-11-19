@@ -6,12 +6,9 @@ class ServerHandlerThread(private val app: ChatClientApplication) : Thread() {
             val input = app.readPacket()
             when (input[0]) {
                 "Message" -> {
-                    if (app.currentScreen == Screen.CHAT) {
-                        app.printToScreen(input[1])
-                    } else {
-                        return
-                    }
+                    if (app.currentScreen == Screen.CHAT) app.printToScreen(input[1]) else return
                 }
+
                 "Ban" -> {
                     app.changeScreen(Screen.LOGIN)
                     app.printToScreen("You have been banned!")

@@ -74,7 +74,7 @@ class ClientHandlerThread(private val command: ChatServerCommand, private val uu
                                     )
                                 )
                                 session.writePacket(listOf("Register", "Register Successful! Please log into your new account."))
-                                command.updateConfigFile()
+                                command.updateAccountFile()
                                 command.echo("Session $uuid has registered an account by the name of ${credentials[0]}.")
                             }
                         }
@@ -101,7 +101,7 @@ class ClientHandlerThread(private val command: ChatServerCommand, private val uu
                                                         command.accounts[command2[1]]?.banned = true
                                                         session2.writePacket(listOf("Ban"))
                                                         command.clients[uuid]?.account = null
-                                                        command.updateConfigFile()
+                                                        command.updateAccountFile()
                                                         command.broadcast("${session.account?.first} has been banned.")
                                                     }
                                                 }
@@ -115,6 +115,7 @@ class ClientHandlerThread(private val command: ChatServerCommand, private val uu
                                         else if (command.accounts[command2[1]]?.banned == false) session.writePacket(listOf("Error", "${command2[1]} is already unbanned!"))
                                         else {
                                             command.accounts[command2[1]]?.banned = false
+                                            command.updateAccountFile()
                                             session.writePacket(listOf("Message", "Unbanned ${command2[1]}!"))
                                         }
                                     } else session.writePacket(listOf("Error", "Incorrect permissions! Use /help for help."))
