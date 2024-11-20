@@ -39,7 +39,8 @@ class ClientHandlerThread(private val command: ChatServerCommand, private val uu
                                     session.connection.writePacket(PacketHeader.LOGIN)
                                     session.account = Pair(input.data[0], command.accounts[input.data[0]]!!)
                                     command.echo("Session $uuid has logged into account ${session.account?.first}.")
-                                    command.broadcast("${session.account?.first} has connected.")
+                                    session.connection.writePacket(PacketHeader.MESSAGE, "There are ${command.onlineClientCount - 1} other users online.")
+                                    command.broadcast("${session.account?.first} has connected.") { uuid != it }
                                 }
                             }
                         }
@@ -87,8 +88,47 @@ class ClientHandlerThread(private val command: ChatServerCommand, private val uu
                             if (message[0] == '/') {
                                 val command2 = message.drop(1).split(' ')
                                 when (command2[0]) {
-                                    "help" -> session.connection.writePacket(PacketHeader.MESSAGE, "Commands:\n/help: Prints this message.\n/account: Lists the information about your account.${if (session.account?.second?.admin == true) "\n/ban: Bans an account." else ""}")
+                                    "help" -> {
+                                        session.connection.writePacket(PacketHeader.MESSAGE, "Commands:")
+                                        session.connection.writePacket(
+                                            PacketHeader.MESSAGE,
+                                            "/help: Prints this message."
+                                        )
+                                        session.connection.writePacket(
+                                            PacketHeader.MESSAGE,
+                                            "/account: Lists information about your account."
+                                        )
+                                        session.connection.writePacket(
+                                            PacketHeader.MESSAGE,
+                                            "/online: Lists the online users."
+                                        )
+                                        if (session.account!!.second.admin) {
+                                            session.connection.writePacket(
+                                                PacketHeader.MESSAGE,
+                                                "/ban: Bans an account."
+                                            )
+                                            session.connection.writePacket(
+                                                PacketHeader.MESSAGE,
+                                                "/unban: Unbans an account."
+                                            )
+                                        }
+                                    }
+
                                     "account" -> session.connection.writePacket(PacketHeader.MESSAGE, "Your username is ${session.account?.first}.${if (session.account?.second?.admin == true) " You are also an admin." else ""}")
+                                    "online" -> {
+                                        session.connection.writePacket(
+                                            PacketHeader.MESSAGE,
+                                            "There are ${command.onlineClientCount} users online:"
+                                        )
+                                        command.clients.forEach { (_, session2) ->
+                                            if (session2.account != null) {
+                                                session.connection.writePacket(
+                                                    PacketHeader.MESSAGE,
+                                                    session2.account!!.first
+                                                )
+                                            }
+                                        }
+                                    }
                                     "ban" -> {
                                         if (session.account?.second?.admin == true) {
                                             if (command2.size != 2) session.connection.writePacket(PacketHeader.ERROR, "Incorrect arguments!")

@@ -19,6 +19,12 @@ class ChatServerCommand : CliktCommand() {
         mustExist = false,
         canBeDir = false
     ).required()
+    val onlineClientCount: Int
+        get() {
+            var count = 0
+            clients.forEach { (_, client) -> if (client.account != null) count++ }
+            return count
+        }
     val accounts = HashMap<String, AccountInfo>()
     val clients = HashMap<UUID, Session>()
 
@@ -34,9 +40,9 @@ class ChatServerCommand : CliktCommand() {
         }
     }
 
-    fun broadcast(message: String) {
-        clients.forEach { (_, client) ->
-            if (client.account != null) client.connection.writePacket(PacketHeader.MESSAGE, message)
+    fun broadcast(message: String, condition: (UUID) -> Boolean = { true }) {
+        clients.forEach { (uuid, client) ->
+            if (client.account != null && condition(uuid)) client.connection.writePacket(PacketHeader.MESSAGE, message)
         }
     }
 

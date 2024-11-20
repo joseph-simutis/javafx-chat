@@ -55,7 +55,7 @@ enum class Screen(val width: Double, val height: Double) {
 
         override fun printToScreen(str: String) {
             messageBox.text = str
-            FadeTransition(Duration.seconds(5.0), messageBox).apply {
+            FadeTransition(Duration.seconds(10.0), messageBox).apply {
                 fromValue = 1.0
                 toValue = 0.0
                 play()
@@ -108,7 +108,7 @@ enum class Screen(val width: Double, val height: Double) {
 
         override fun printToScreen(str: String) {
             messageBox.text = str
-            FadeTransition(Duration.seconds(5.0), messageBox).apply {
+            FadeTransition(Duration.seconds(10.0), messageBox).apply {
                 fromValue = 1.0
                 toValue = 0.0
                 play()
@@ -148,7 +148,7 @@ enum class Screen(val width: Double, val height: Double) {
 
         override fun printToScreen(str: String) {
             messageBox.text = str
-            FadeTransition(Duration.seconds(5.0), messageBox).apply {
+            FadeTransition(Duration.seconds(10.0), messageBox).apply {
                 fromValue = 1.0
                 toValue = 0.0
                 play()
