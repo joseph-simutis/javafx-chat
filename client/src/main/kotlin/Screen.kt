@@ -1,5 +1,7 @@
 package io.github.josephsimutis.client
 
+import io.github.josephsimutis.common.Connection
+import io.github.josephsimutis.common.packet.PacketHeader
 import javafx.animation.FadeTransition
 import javafx.event.EventHandler
 import javafx.geometry.Pos
@@ -29,9 +31,11 @@ enum class Screen(val width: Double, val height: Double) {
                         Button("Connect").also { button ->
                             button.onAction = EventHandler {
                                 try {
-                                    app.socket = Socket(
-                                        (hBox.children[1] as TextField).text,
-                                        (hBox.children[3] as TextField).text.toInt()
+                                    app.connection = Connection(
+                                        Socket(
+                                            (hBox.children[1] as TextField).text,
+                                            (hBox.children[3] as TextField).text.toInt()
+                                        )
                                     )
                                     app.changeScreen(LOGIN)
                                 } catch (e: IOException) {
@@ -64,38 +68,29 @@ enum class Screen(val width: Double, val height: Double) {
         override fun draw(app: ChatClientApplication) = VBox().also { vBox ->
             vBox.children.addAll(
                 Text("Login").apply { font = Font.font(36.0) },
-                HBox(Text("Username:"), TextField().apply {
-                    textFormatter = TextFormatter<String> {
-                        if (!it.text.contains(';')) it else null
-                    }
-                }),
-                HBox(Text("Password:"), PasswordField().apply {
-                    textFormatter = TextFormatter<String> {
-                        if (!it.text.contains(';')) it else null
-                    }
-                }),
+                HBox(Text("Username:"), TextField()),
+                HBox(Text("Password:"), PasswordField()),
                 Button("Login").apply {
                     onAction = EventHandler {
-                        app.writePacket(
-                            listOf(
-                                "Login",
-                                "${((vBox.children[1] as HBox).children[1] as TextField).text};${((vBox.children[2] as HBox).children[1] as PasswordField).text}"
-                            )
+                        app.connection!!.writePacket(
+                            PacketHeader.LOGIN,
+                            ((vBox.children[1] as HBox).children[1] as TextField).text,
+                            ((vBox.children[2] as HBox).children[1] as PasswordField).text
                         )
-                        app.readPacket().also { input ->
-                            when (input[0]) {
-                                "Login" -> {
+                        app.connection!!.readPacket().also { packet ->
+                            when (packet.header) {
+                                PacketHeader.LOGIN -> {
                                     app.changeScreen(CHAT)
                                 }
 
-                                "Error" -> {
+                                PacketHeader.ERROR -> {
                                     ((vBox.children[1] as HBox).children[1] as TextField).text = ""
                                     ((vBox.children[2] as HBox).children[1] as PasswordField).text = ""
-                                    printToScreen(input[1])
+                                    printToScreen(packet.data[0])
                                 }
 
                                 else -> {
-                                    printToScreen("Server responded with invalid packet: ${input}!")
+                                    printToScreen("Server responded with invalid packet: ${packet.toPrintableString()}!")
                                 }
                             }
                         }
@@ -126,28 +121,19 @@ enum class Screen(val width: Double, val height: Double) {
         override fun draw(app: ChatClientApplication) = VBox().also { vBox ->
             vBox.children.addAll(
                 Text("Register").apply { font = Font.font(36.0) },
-                HBox(Text("Username:"), TextField().apply {
-                    textFormatter = TextFormatter<String> {
-                        if (!it.text.contains(';')) it else null
-                    }
-                }),
-                HBox(Text("Password:"), PasswordField().apply {
-                    textFormatter = TextFormatter<String> {
-                        if (!it.text.contains(';')) it else null
-                    }
-                }),
+                HBox(Text("Username:"), TextField()),
+                HBox(Text("Password:"), PasswordField()),
                 Button("Register").apply {
                     onAction = EventHandler {
-                        app.writePacket(
-                            listOf(
-                                "Register",
-                                "${((vBox.children[1] as HBox).children[1] as TextField).text};${((vBox.children[2] as HBox).children[1] as PasswordField).text}"
-                            )
+                        app.connection!!.writePacket(
+                            PacketHeader.REGISTER,
+                            ((vBox.children[1] as HBox).children[1] as TextField).text,
+                            ((vBox.children[2] as HBox).children[1] as PasswordField).text
                         )
-                        val input = app.readPacket()
+                        val packet = app.connection!!.readPacket()
                         ((vBox.children[1] as HBox).children[1] as TextField).text = ""
                         ((vBox.children[2] as HBox).children[1] as PasswordField).text = ""
-                        printToScreen(input[1])
+                        printToScreen(packet.data[0])
                     }
                 },
                 Button("Switch to login screen").apply {
@@ -182,7 +168,7 @@ enum class Screen(val width: Double, val height: Double) {
                 },
                 TextField().apply {
                     onAction = EventHandler {
-                        if (text != "") app.writePacket(listOf("Message", text))
+                        if (text != "") app.connection!!.writePacket(PacketHeader.MESSAGE, text)
                         text = ""
                     }
                 },
@@ -191,7 +177,7 @@ enum class Screen(val width: Double, val height: Double) {
                         Button("Logout").apply {
                             onAction = EventHandler {
                                 app.changeScreen(LOGIN)
-                                app.writePacket(listOf("Logout"))
+                                app.connection!!.writePacket(PacketHeader.LOGOUT)
                             }
                         }
                     )

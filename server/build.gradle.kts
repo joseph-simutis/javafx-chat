@@ -14,6 +14,7 @@ dependencies {
     implementation("com.github.ajalt.clikt:clikt:5.0.1")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
     implementation("at.favre.lib:bcrypt:0.10.2")
+    implementation(project(":common"))
 }
 
 application {

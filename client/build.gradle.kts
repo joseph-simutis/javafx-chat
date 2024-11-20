@@ -10,6 +10,10 @@ repositories {
     mavenCentral()
 }
 
+dependencies {
+    implementation(project(":common"))
+}
+
 application {
     mainClass = "io.github.josephsimutis.client.MainKt"
 }

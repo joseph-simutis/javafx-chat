@@ -3,4 +3,4 @@ plugins {
 }
 
 rootProject.name = "javafx-chat"
-include("server", "client")
+include("server", "client", "common")
