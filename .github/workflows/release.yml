@@ -1,0 +1,35 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'The name of the release to draft.'
+        type: string
+        required: true
+      version:
+        description: 'The version, as it appears in build.gradle.kts.'
+        type: string
+        required: true
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Gradle 8.8
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: "8.8"
+      - name: Build Jars
+        run:
+          gradle client:build
+          gradle server:build
+      - name: Draft Release
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          files: |
+            client/build/libs/client-${{ inputs.version }}.jar
+            server/build/libs/server-${{ inputs.version }}.jar
+          tag_name: ${{ inputs.name }}
