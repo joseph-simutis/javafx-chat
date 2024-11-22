@@ -26,8 +26,8 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
         with:
           gradle-version: "8.8"
-      - name: Build Jars
-        run:
+      - name: Build Client Jar
+        run: |
           gradle client:build
           gradle server:build
       - name: Draft Release
